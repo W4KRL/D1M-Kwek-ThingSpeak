@@ -122,7 +122,7 @@ void setup() {
   Serial.begin(115200);          // initialize the serial port
   Wire.begin();                  // wake up the I2C bus for BH1750 & BME280
 //  initializeSensors();           // start BME280 and BH1750 sensors
-//  readSensors();                 // read data into sensorData struct
+  readSensors();                 // read data into sensorData struct
   printToSerialPort();           // display data on local serial monitor
   readRTCmemory();               // get sensor status and WiFi channel info
   logonToRouter();               // logon to local Wi-Fi
@@ -163,7 +163,7 @@ void loop() {                    // there is nothing to do here
 // *******************************************************
 // ********* Read sensors into sensorData struct *********
 // *******************************************************
-//void readSensors() {
+void readSensors() {
 //  // WiFi signal strength is read in logonToRouter()
 //
 //  if ( sensorData.bme280Fail == false ) {
@@ -188,12 +188,12 @@ void loop() {                    // there is nothing to do here
 //  // the D1M-WX1 has an external resistor to extend the range to 5.0 Volts
 //  // a fudgeFactor corrects for voltage divider component variation
 //  // as measured by the user in the calbration step
-//  float fudgeFactor = DMM_VOLTAGE / ADC_VOLTAGE;
-//  sensorData.cellVoltage = 5.0 * analogRead(A0) * fudgeFactor / 1023.0;
-//  if ( sensorData.cellVoltage < MIN_VCELL ) {
-//    sensorData.lowVcell = true;
-//  }
-//} // readSensors()
+  float fudgeFactor = DMM_VOLTAGE / ADC_VOLTAGE;
+  sensorData.cellVoltage = 5.0 * analogRead(A0) * fudgeFactor / 1023.0;
+  if ( sensorData.cellVoltage < MIN_VCELL ) {
+    sensorData.lowVcell = true;
+  }
+} // readSensors()
 
 // *******************************************************
 // ************ Print data to the serial port ************
@@ -406,8 +406,8 @@ void postToThingSpeak() {
     dataString += "&field3=" + String(rtcData.timeAwake);
 //    dataString += "&field4=" + String(sensorData.seaLevelPressure);
 //    dataString += "&field5=" + String(sensorData.lightLevel);
-//    dataString += "&field6=" + String(sensorData.cellVoltage);
-//    dataString += "&field7=" + String(sensorData.wifiRSSI);
+    dataString += "&field6=" + String(sensorData.cellVoltage);
+    dataString += "&field7=" + String(sensorData.wifiRSSI);
 //    dataString += "&field8=" + String(sensorData.fahrenheit);
     dataString += "&status=" + unitStatus;
 
